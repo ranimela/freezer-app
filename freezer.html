@@ -702,7 +702,6 @@
 
         const id = activeDrawer;
         const items = state.drawers[id];
-        const available = state.items.filter(i => !items.includes(i));
 
         const listHtml = items.map((item, idx) => `
             <li>
@@ -712,24 +711,15 @@
                         title="Remove from drawer">&#10005;</button>
             </li>`).join('');
 
-        const noMaster = state.items.length === 0;
-        const allAdded  = !noMaster && available.length === 0;
-
-        let addRowHtml;
-        if (noMaster) {
-            addRowHtml = `<p class="hint">Add items to the Master List below, then come back to add them here.</p>`;
-        } else if (allAdded) {
-            addRowHtml = `<p class="hint">All master items are already in this drawer.</p>`;
-        } else {
-            addRowHtml = `
-                <div class="add-row">
+        const addRowHtml = state.items.length === 0
+            ? `<p class="hint">Add items to the Master List below, then come back to add them here.</p>`
+            : `<div class="add-row">
                     <select id="add-select">
                         <option value="">&#8212; pick an item &#8212;</option>
-                        ${available.map(i => `<option value="${esc(i)}">${esc(i)}</option>`).join('')}
+                        ${state.items.map(i => `<option value="${esc(i)}">${esc(i)}</option>`).join('')}
                     </select>
                     <button class="btn btn-blue" onclick="addToDrawer('${id}')">Add</button>
-                </div>`;
-        }
+               </div>`;
 
         panel.innerHTML = `
             <div class="detail-title">
@@ -790,11 +780,9 @@
         if (!sel) return;
         const item = sel.value;
         if (!item) return;
-        if (!state.drawers[id].includes(item)) {
-            state.drawers[id].push(item);
-            persist();
-            renderAll();
-        }
+        state.drawers[id].push(item);
+        persist();
+        renderAll();
     }
 
     function removeFromDrawer(id, idx) {
