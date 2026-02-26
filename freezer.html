@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freezer Manager</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #dce8f2;
+            color: #2d3748;
+            min-height: 100vh;
+            padding: 28px 20px 40px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1a365d;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* ===== Layout ===== */
+        .layout {
+            display: flex;
+            gap: 20px;
+            max-width: 940px;
+            margin: 0 auto 24px;
+            align-items: flex-start;
+        }
+
+        /* ===== Freezer ===== */
+        .freezer-wrap { flex-shrink: 0; }
+
+        .freezer {
+            background: linear-gradient(160deg, #1a2a44 0%, #0e1c32 100%);
+            border-radius: 16px;
+            padding: 14px;
+            display: flex;
+            gap: 10px;
+            height: 480px;
+            box-shadow:
+                0 12px 48px rgba(0,0,0,0.45),
+                inset 0 1px 0 rgba(255,255,255,0.09),
+                inset 0 -1px 0 rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        /* subtle frost shimmer */
+        .freezer::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            background: radial-gradient(ellipse at 30% 15%, rgba(150,210,255,0.07) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 80%, rgba(100,180,255,0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .freezer-col {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            position: relative;
+            width: 180px;
+        }
+
+        /* divider between sides */
+        .col-left { border-right: 2px solid rgba(255,255,255,0.06); padding-right: 9px; }
+
+        .drawer {
+            flex: 1;
+            background: linear-gradient(170deg, #e8eef8 0%, #d4dced 100%);
+            border-radius: 9px;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s, background 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+        }
+
+        .drawer:hover {
+            border-color: #90cdf4;
+            transform: translateX(3px);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.6);
+        }
+
+        .drawer.active {
+            border-color: #3182ce;
+            background: linear-gradient(170deg, #ebf8ff 0%, #c5e5f9 100%);
+        }
+
+        /* Drawer sizes — small = 1 share, large = 2 shares of column height */
+        .drawer.drawer-sm { flex: 1; }
+        .drawer.drawer-lg { flex: 2; }
+
+        /* Non-interactive filler that occupies a small-drawer slot on the right side */
+        .drawer-filler {
+            flex: 1;
+            border-radius: 9px;
+            background: linear-gradient(170deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.12) 100%);
+            border: 1.5px dashed rgba(255,255,255,0.07);
+        }
+
+        .drawer-inner {
+            flex: 1;
+            padding: 8px 9px 4px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .drawer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .drawer-label {
+            font-size: 0.64rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            color: #4a5568;
+        }
+
+        .count-badge {
+            background: #4299e1;
+            color: white;
+            font-size: 0.63rem;
+            font-weight: 700;
+            padding: 1px 7px;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .count-badge.zero { background: #cbd5e0; color: #718096; }
+
+        .drawer-chips {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .mini-chip {
+            background: rgba(49,130,206,0.15);
+            color: #2b6cb0;
+            font-size: 0.62rem;
+            font-weight: 500;
+            padding: 2px 7px;
+            border-radius: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .mini-chip.more {
+            background: rgba(160,174,192,0.2);
+            color: #718096;
+        }
+
+        .handle-wrap {
+            padding: 4px 9px 8px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .handle {
+            width: 52%;
+            height: 5px;
+            background: linear-gradient(90deg, #94a3b8, #cbd5e0 50%, #94a3b8);
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+
+        /* ===== Detail Panel ===== */
+        .detail-panel {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 14px rgba(0,0,0,0.08);
+            height: 480px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-empty {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            color: #a0aec0;
+            text-align: center;
+        }
+
+        .detail-empty svg { opacity: 0.25; }
+
+        .detail-empty p { font-size: 0.92rem; line-height: 1.6; }
+
+        .detail-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2d3748;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #edf2f7;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .drawer-items-list {
+            list-style: none;
+            overflow-y: auto;
+            flex: 1;
+            margin-bottom: 12px;
+        }
+
+        .drawer-items-list:empty::after {
+            content: 'This drawer is empty.';
+            display: block;
+            text-align: center;
+            color: #a0aec0;
+            font-size: 0.88rem;
+            padding: 24px 0;
+        }
+
+        .drawer-items-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            border-radius: 7px;
+            margin-bottom: 4px;
+            background: #f7fafc;
+            font-size: 0.9rem;
+            transition: background 0.12s;
+        }
+
+        .drawer-items-list li:hover { background: #edf2f7; }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #cbd5e0;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 3px 6px;
+            border-radius: 5px;
+            line-height: 1;
+            transition: color 0.12s, background 0.12s;
+            flex-shrink: 0;
+        }
+
+        .remove-btn:hover { color: #e53e3e; background: #fff5f5; }
+
+        .add-row {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .add-row select {
+            flex: 1;
+            padding: 8px 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            background: white;
+            color: #2d3748;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .add-row select:focus { border-color: #4299e1; }
+
+        .hint { color: #a0aec0; font-size: 0.78rem; margin-top: 8px; }
+
+        /* ===== Buttons ===== */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+            white-space: nowrap;
+        }
+
+        .btn:active { transform: scale(0.96); }
+        .btn-blue { background: #4299e1; color: white; }
+        .btn-blue:hover { background: #3182ce; }
+
+        /* ===== Master Items ===== */
+        .master-section {
+            max-width: 940px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 14px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2d3748;
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+            border-bottom: 2px solid #edf2f7;
+        }
+
+        .add-master-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .add-master-row input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            color: #2d3748;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .add-master-row input:focus { border-color: #4299e1; }
+        .add-master-row input.error { border-color: #fc8181; }
+
+        .master-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 38px;
+            align-items: flex-start;
+            align-content: flex-start;
+        }
+
+        .master-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            background: #f7fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 4px 8px 4px 12px;
+            font-size: 0.85rem;
+            color: #4a5568;
+            transition: border-color 0.15s;
+        }
+
+        .master-chip:hover { border-color: #90cdf4; }
+
+        .chip-name {
+            cursor: pointer;
+        }
+
+        .chip-name:hover {
+            color: #2d3748;
+        }
+
+        .chip-edit-input {
+            border: none;
+            background: transparent;
+            font-size: 0.85rem;
+            color: #2d3748;
+            outline: 2px solid #4299e1;
+            border-radius: 3px;
+            padding: 1px 5px;
+            min-width: 80px;
+            font-family: inherit;
+        }
+
+        .in-drawers {
+            font-size: 0.7rem;
+            color: #a0aec0;
+            margin: 0 3px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.78rem;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s, color 0.15s;
+            color: #a0aec0;
+            padding: 0;
+        }
+
+        .icon-btn:hover { background: #edf2f7; color: #4a5568; }
+        .icon-btn.del:hover { background: #fff5f5; color: #e53e3e; }
+
+        .empty-note { color: #a0aec0; font-size: 0.875rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>&#10052; Freezer Manager</h1>
+    <p>Track what's in every drawer</p>
+</header>
+
+<div class="layout">
+
+    <!-- Freezer Visual -->
+    <div class="freezer-wrap">
+        <div class="freezer">
+            <!-- Left: 2 small + 1 large drawer -->
+            <div class="freezer-col col-left">
+                <div class="drawer drawer-sm" id="drawer-L1" onclick="selectDrawer('L1')">
+                    <div class="drawer-inner">
+                        <div class="drawer-top">
+                            <span class="drawer-label">Left 1</span>
+                            <span class="count-badge zero" id="badge-L1">0</span>
+                        </div>
+                        <div class="drawer-chips" id="chips-L1"></div>
+                    </div>
+                    <div class="handle-wrap"><div class="handle"></div></div>
+                </div>
+                <div class="drawer drawer-sm" id="drawer-L2" onclick="selectDrawer('L2')">
+                    <div class="drawer-inner">
+                        <div class="drawer-top">
+                            <span class="drawer-label">Left 2</span>
+                            <span class="count-badge zero" id="badge-L2">0</span>
+                        </div>
+                        <div class="drawer-chips" id="chips-L2"></div>
+                    </div>
+                    <div class="handle-wrap"><div class="handle"></div></div>
+                </div>
+                <div class="drawer drawer-lg" id="drawer-L3" onclick="selectDrawer('L3')">
+                    <div class="drawer-inner">
+                        <div class="drawer-top">
+                            <span class="drawer-label">Left 3</span>
+                            <span class="count-badge zero" id="badge-L3">0</span>
+                        </div>
+                        <div class="drawer-chips" id="chips-L3"></div>
+                    </div>
+                    <div class="handle-wrap"><div class="handle"></div></div>
+                </div>
+            </div>
+
+            <!-- Right: filler (top) + 1 small + 1 large drawer -->
+            <div class="freezer-col col-right">
+                <div class="drawer-filler"></div>
+                <div class="drawer drawer-sm" id="drawer-R1" onclick="selectDrawer('R1')">
+                    <div class="drawer-inner">
+                        <div class="drawer-top">
+                            <span class="drawer-label">Right 1</span>
+                            <span class="count-badge zero" id="badge-R1">0</span>
+                        </div>
+                        <div class="drawer-chips" id="chips-R1"></div>
+                    </div>
+                    <div class="handle-wrap"><div class="handle"></div></div>
+                </div>
+                <div class="drawer drawer-lg" id="drawer-R2" onclick="selectDrawer('R2')">
+                    <div class="drawer-inner">
+                        <div class="drawer-top">
+                            <span class="drawer-label">Right 2</span>
+                            <span class="count-badge zero" id="badge-R2">0</span>
+                        </div>
+                        <div class="drawer-chips" id="chips-R2"></div>
+                    </div>
+                    <div class="handle-wrap"><div class="handle"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Panel -->
+    <div class="detail-panel" id="detail-panel">
+        <div class="detail-empty">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="1.4" stroke-linecap="round">
+                <rect x="2" y="3" width="20" height="19" rx="2"/>
+                <line x1="2" y1="10" x2="22" y2="10"/>
+                <line x1="2" y1="17" x2="22" y2="17"/>
+                <line x1="8"  y1="10" x2="8"  y2="22"/>
+            </svg>
+            <p>Click a drawer to view<br>and manage its contents</p>
+        </div>
+    </div>
+</div>
+
+<!-- Master Items -->
+<div class="master-section">
+    <div class="section-title">&#128230; Master Items List</div>
+    <div class="add-master-row">
+        <input type="text" id="new-item-input"
+               placeholder="New item name (e.g. Chicken Thighs)..."
+               onkeydown="if(event.key==='Enter') addMasterItem()">
+        <button class="btn btn-blue" onclick="addMasterItem()">+ Add Item</button>
+    </div>
+    <div class="master-grid" id="master-grid">
+        <span class="empty-note">No items yet — add your first item above.</span>
+    </div>
+</div>
+
+<script>
+    const DRAWERS = ['L1', 'L2', 'L3', 'R1', 'R2'];
+    const DRAWER_NAMES = {
+        L1: 'Left Drawer 1 — Top',
+        L2: 'Left Drawer 2 — Middle',
+        L3: 'Left Drawer 3 — Bottom',
+        R1: 'Right Drawer 1 — Top',
+        R2: 'Right Drawer 2 — Bottom',
+    };
+
+    // ---- State ----
+    let state = {
+        items: [],
+        drawers: { L1: [], L2: [], L3: [], R1: [], R2: [] }
+    };
+
+    let activeDrawer = null;
+
+    // ---- Persistence ----
+    function persist() {
+        localStorage.setItem('freezer-v1', JSON.stringify(state));
+    }
+
+    function loadState() {
+        try {
+            const raw = localStorage.getItem('freezer-v1');
+            if (!raw) return;
+            const p = JSON.parse(raw);
+            state.items = Array.isArray(p.items) ? p.items : [];
+            DRAWERS.forEach(id => {
+                state.drawers[id] = Array.isArray(p.drawers?.[id]) ? p.drawers[id] : [];
+            });
+        } catch (e) { /* ignore corrupted data */ }
+    }
+
+    // ---- Escape HTML ----
+    function esc(s) {
+        return String(s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    // ---- Render: Freezer drawers ----
+    function renderDrawers() {
+        DRAWERS.forEach(id => {
+            const items = state.drawers[id];
+
+            // Count badge
+            const badge = document.getElementById('badge-' + id);
+            badge.textContent = items.length;
+            badge.className = 'count-badge' + (items.length === 0 ? ' zero' : '');
+
+            // Mini chips preview
+            const chipsEl = document.getElementById('chips-' + id);
+            chipsEl.innerHTML = '';
+            const DRAWER_SIZES = { L1: 'sm', L2: 'sm', L3: 'lg', R1: 'sm', R2: 'lg' };
+            const max = DRAWER_SIZES[id] === 'lg' ? 6 : 3;
+            items.slice(0, max).forEach(item => {
+                const d = document.createElement('div');
+                d.className = 'mini-chip';
+                d.textContent = item;
+                d.title = item;
+                chipsEl.appendChild(d);
+            });
+            if (items.length > max) {
+                const d = document.createElement('div');
+                d.className = 'mini-chip more';
+                d.textContent = '+' + (items.length - max) + ' more';
+                chipsEl.appendChild(d);
+            }
+        });
+    }
+
+    // ---- Render: Detail panel ----
+    function renderDetail() {
+        const panel = document.getElementById('detail-panel');
+
+        if (!activeDrawer) {
+            panel.innerHTML = `
+                <div class="detail-empty">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="1.4" stroke-linecap="round">
+                        <rect x="2" y="3" width="20" height="19" rx="2"/>
+                        <line x1="2" y1="10" x2="22" y2="10"/>
+                        <line x1="2" y1="17" x2="22" y2="17"/>
+                        <line x1="8" y1="10" x2="8" y2="22"/>
+                    </svg>
+                    <p>Click a drawer to view<br>and manage its contents</p>
+                </div>`;
+            return;
+        }
+
+        const id = activeDrawer;
+        const items = state.drawers[id];
+        const available = state.items.filter(i => !items.includes(i));
+
+        const listHtml = items.map((item, idx) => `
+            <li>
+                <span>${esc(item)}</span>
+                <button class="remove-btn"
+                        onclick="removeFromDrawer('${id}',${idx})"
+                        title="Remove from drawer">&#10005;</button>
+            </li>`).join('');
+
+        const noMaster = state.items.length === 0;
+        const allAdded = !noMaster && available.length === 0;
+
+        let addRowHtml;
+        if (noMaster) {
+            addRowHtml = `<p class="hint">Add items to the Master List below, then come back to add them here.</p>`;
+        } else if (allAdded) {
+            addRowHtml = `<p class="hint">All master items are already in this drawer.</p>`;
+        } else {
+            addRowHtml = `
+                <div class="add-row">
+                    <select id="add-select">
+                        <option value="">&#8212; pick an item &#8212;</option>
+                        ${available.map(i => `<option value="${esc(i)}">${esc(i)}</option>`).join('')}
+                    </select>
+                    <button class="btn btn-blue" onclick="addToDrawer('${id}')">Add</button>
+                </div>`;
+        }
+
+        panel.innerHTML = `
+            <div class="detail-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4299e1" stroke-width="2.5" stroke-linecap="round">
+                    <rect x="2" y="3" width="20" height="19" rx="2"/>
+                    <line x1="2" y1="12" x2="22" y2="12"/>
+                </svg>
+                ${esc(DRAWER_NAMES[id])}
+            </div>
+            <ul class="drawer-items-list">${listHtml}</ul>
+            ${addRowHtml}`;
+    }
+
+    // ---- Render: Master Items ----
+    function renderMaster() {
+        const grid = document.getElementById('master-grid');
+
+        if (state.items.length === 0) {
+            grid.innerHTML = '<span class="empty-note">No items yet &#8212; add your first item above.</span>';
+            return;
+        }
+
+        grid.innerHTML = '';
+        state.items.forEach((item, idx) => {
+            const inCount = DRAWERS.filter(d => state.drawers[d].includes(item)).length;
+
+            const chip = document.createElement('div');
+            chip.className = 'master-chip';
+            chip.id = 'mchip-' + idx;
+
+            chip.innerHTML =
+                `<span class="chip-name" onclick="startEdit(${idx})" title="Click to rename">${esc(item)}</span>` +
+                (inCount > 0 ? `<span class="in-drawers" title="In ${inCount} drawer(s)">&#215;${inCount}</span>` : '') +
+                `<button class="icon-btn" onclick="startEdit(${idx})" title="Rename">&#9998;</button>` +
+                `<button class="icon-btn del" onclick="deleteMaster(${idx})" title="Delete item">&#10005;</button>`;
+
+            grid.appendChild(chip);
+        });
+    }
+
+    function renderAll() {
+        renderDrawers();
+        renderDetail();
+        renderMaster();
+    }
+
+    // ---- Actions ----
+    function selectDrawer(id) {
+        if (activeDrawer && activeDrawer !== id) {
+            document.getElementById('drawer-' + activeDrawer).classList.remove('active');
+        }
+        activeDrawer = id;
+        document.getElementById('drawer-' + id).classList.add('active');
+        renderDetail();
+    }
+
+    function addToDrawer(id) {
+        const sel = document.getElementById('add-select');
+        if (!sel) return;
+        const item = sel.value;
+        if (!item) return;
+        if (!state.drawers[id].includes(item)) {
+            state.drawers[id].push(item);
+            persist();
+            renderAll();
+        }
+    }
+
+    function removeFromDrawer(id, idx) {
+        state.drawers[id].splice(idx, 1);
+        persist();
+        renderAll();
+    }
+
+    function addMasterItem() {
+        const input = document.getElementById('new-item-input');
+        const name = input.value.trim();
+        if (!name) return;
+
+        const dupe = state.items.some(i => i.toLowerCase() === name.toLowerCase());
+        if (dupe) {
+            input.classList.add('error');
+            input.title = 'Item already exists';
+            setTimeout(() => { input.classList.remove('error'); input.title = ''; }, 2000);
+            return;
+        }
+
+        state.items.push(name);
+        state.items.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+        persist();
+        input.value = '';
+        renderAll();
+    }
+
+    function deleteMaster(idx) {
+        const item = state.items[idx];
+        DRAWERS.forEach(d => {
+            state.drawers[d] = state.drawers[d].filter(i => i !== item);
+        });
+        state.items.splice(idx, 1);
+        persist();
+        renderAll();
+    }
+
+    function startEdit(idx) {
+        const chip = document.getElementById('mchip-' + idx);
+        if (!chip) return;
+        const nameSpan = chip.querySelector('.chip-name');
+        if (!nameSpan) return;
+
+        const oldName = state.items[idx];
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.className = 'chip-edit-input';
+        inp.value = oldName;
+        nameSpan.replaceWith(inp);
+        inp.focus();
+        inp.select();
+
+        let done = false;
+
+        function commit() {
+            if (done) return;
+            done = true;
+            const newName = inp.value.trim();
+            const conflict = state.items.some((s, i) =>
+                i !== idx && s.toLowerCase() === newName.toLowerCase());
+            if (newName && newName !== oldName && !conflict) {
+                DRAWERS.forEach(d => {
+                    state.drawers[d] = state.drawers[d].map(s => s === oldName ? newName : s);
+                });
+                state.items[idx] = newName;
+                state.items.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+                persist();
+            }
+            renderAll();
+        }
+
+        inp.addEventListener('blur', commit);
+        inp.addEventListener('keydown', e => {
+            if (e.key === 'Enter') inp.blur();
+            if (e.key === 'Escape') { done = true; renderAll(); }
+        });
+    }
+
+    // ---- Init ----
+    loadState();
+    renderAll();
+</script>
+
+</body>
+</html>
