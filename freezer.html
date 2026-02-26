@@ -426,9 +426,49 @@
         .icon-btn.del:hover { background: #fff5f5; color: #e53e3e; }
 
         .empty-note { color: #a0aec0; font-size: 0.875rem; }
+
+        /* ===== Loading overlay ===== */
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(220, 232, 242, 0.94);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            gap: 14px;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        #loading-overlay .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #bee3f8;
+            border-top-color: #4299e1;
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+        }
+
+        #loading-overlay.error { gap: 8px; }
+        #loading-overlay .err-icon { font-size: 2rem; }
+        #loading-overlay .err-msg  { font-size: 0.82rem; color: #718096; max-width: 280px; text-align: center; }
     </style>
+
+    <!-- Firebase v10 compat — no build tools needed -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
+
+<!-- Shown until the first Firestore snapshot arrives -->
+<div id="loading-overlay">
+    <div class="spinner"></div>
+    Connecting&hellip;
+</div>
 
 <header>
     <h1>&#10052; Freezer Manager</h1>
@@ -530,13 +570,31 @@
 </div>
 
 <script>
+    // ---- Firebase setup ----
+    const firebaseConfig = {
+        apiKey: "AIzaSyCdSpsitmhYp_2RJHF45sY6jx8JuK7Sxlw",
+        authDomain: "freezer-app-ce27f.firebaseapp.com",
+        projectId: "freezer-app-ce27f",
+        storageBucket: "freezer-app-ce27f.firebasestorage.app",
+        messagingSenderId: "1077631987632",
+        appId: "1:1077631987632:web:ab8f7e6c412f2cbf093075",
+        measurementId: "G-XMPYWFRJWY"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    // Single document holds the full app state
+    const docRef = db.collection('freezer').doc('data');
+
+    // ---- Constants ----
     const DRAWERS = ['L1', 'L2', 'L3', 'R1', 'R2'];
+    const DRAWER_SIZES = { L1: 'sm', L2: 'sm', L3: 'lg', R1: 'sm', R2: 'lg' };
     const DRAWER_NAMES = {
-        L1: 'Left Drawer 1 — Top',
-        L2: 'Left Drawer 2 — Middle',
-        L3: 'Left Drawer 3 — Bottom',
-        R1: 'Right Drawer 1 — Top',
-        R2: 'Right Drawer 2 — Bottom',
+        L1: 'Left Drawer 1 \u2014 Top',
+        L2: 'Left Drawer 2 \u2014 Middle',
+        L3: 'Left Drawer 3 \u2014 Bottom',
+        R1: 'Right Drawer 1 \u2014 Top',
+        R2: 'Right Drawer 2 \u2014 Bottom',
     };
 
     // ---- State ----
@@ -546,23 +604,46 @@
     };
 
     let activeDrawer = null;
+    // Prevents remote snapshots from clobbering an in-progress inline edit
+    let isEditing = false;
 
-    // ---- Persistence ----
+    // ---- Persistence: write full state to Firestore ----
     function persist() {
-        localStorage.setItem('freezer-v1', JSON.stringify(state));
+        docRef.set({ items: state.items, drawers: state.drawers })
+              .catch(err => console.error('Firestore write error:', err));
     }
 
-    function loadState() {
-        try {
-            const raw = localStorage.getItem('freezer-v1');
-            if (!raw) return;
-            const p = JSON.parse(raw);
-            state.items = Array.isArray(p.items) ? p.items : [];
-            DRAWERS.forEach(id => {
-                state.drawers[id] = Array.isArray(p.drawers?.[id]) ? p.drawers[id] : [];
-            });
-        } catch (e) { /* ignore corrupted data */ }
-    }
+    // ---- Real-time listener ----
+    docRef.onSnapshot(
+        (doc) => {
+            // Merge remote data into local state
+            if (doc.exists) {
+                const d = doc.data();
+                state.items = Array.isArray(d.items) ? d.items : [];
+                DRAWERS.forEach(id => {
+                    state.drawers[id] = Array.isArray(d.drawers?.[id]) ? d.drawers[id] : [];
+                });
+            }
+
+            // Hide loading overlay on first snapshot
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) overlay.style.display = 'none';
+
+            // Don't re-render while the user is typing in an inline edit field
+            if (!isEditing) renderAll();
+        },
+        (err) => {
+            console.error('Firestore error:', err);
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+                overlay.classList.add('error');
+                overlay.innerHTML =
+                    '<div class="err-icon">&#9888;</div>' +
+                    '<strong style="color:#c53030">Could not connect to Firestore</strong>' +
+                    '<div class="err-msg">' + esc(err.message) + '</div>';
+            }
+        }
+    );
 
     // ---- Escape HTML ----
     function esc(s) {
@@ -578,15 +659,12 @@
         DRAWERS.forEach(id => {
             const items = state.drawers[id];
 
-            // Count badge
             const badge = document.getElementById('badge-' + id);
             badge.textContent = items.length;
             badge.className = 'count-badge' + (items.length === 0 ? ' zero' : '');
 
-            // Mini chips preview
             const chipsEl = document.getElementById('chips-' + id);
             chipsEl.innerHTML = '';
-            const DRAWER_SIZES = { L1: 'sm', L2: 'sm', L3: 'lg', R1: 'sm', R2: 'lg' };
             const max = DRAWER_SIZES[id] === 'lg' ? 6 : 3;
             items.slice(0, max).forEach(item => {
                 const d = document.createElement('div');
@@ -635,7 +713,7 @@
             </li>`).join('');
 
         const noMaster = state.items.length === 0;
-        const allAdded = !noMaster && available.length === 0;
+        const allAdded  = !noMaster && available.length === 0;
 
         let addRowHtml;
         if (noMaster) {
@@ -681,7 +759,6 @@
             const chip = document.createElement('div');
             chip.className = 'master-chip';
             chip.id = 'mchip-' + idx;
-
             chip.innerHTML =
                 `<span class="chip-name" onclick="startEdit(${idx})" title="Click to rename">${esc(item)}</span>` +
                 (inCount > 0 ? `<span class="in-drawers" title="In ${inCount} drawer(s)">&#215;${inCount}</span>` : '') +
@@ -771,11 +848,14 @@
         inp.focus();
         inp.select();
 
+        // Block remote re-renders while the user is typing
+        isEditing = true;
         let done = false;
 
         function commit() {
             if (done) return;
             done = true;
+            isEditing = false;
             const newName = inp.value.trim();
             const conflict = state.items.some((s, i) =>
                 i !== idx && s.toLowerCase() === newName.toLowerCase());
@@ -793,13 +873,9 @@
         inp.addEventListener('blur', commit);
         inp.addEventListener('keydown', e => {
             if (e.key === 'Enter') inp.blur();
-            if (e.key === 'Escape') { done = true; renderAll(); }
+            if (e.key === 'Escape') { done = true; isEditing = false; renderAll(); }
         });
     }
-
-    // ---- Init ----
-    loadState();
-    renderAll();
 </script>
 
 </body>
