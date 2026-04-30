@@ -21,6 +21,22 @@
             --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
 
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+
         *,
         *::before,
         *::after {
@@ -228,6 +244,28 @@
             height: 4px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .drawer:hover .handle {
+            background: var(--accent-blue);
+            width: 50%;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
         /* ===== Detail Panel ===== */
@@ -697,7 +735,7 @@
         function renderDetail() {
             const panel = document.getElementById('detail-panel');
             if (!activeDrawer) {
-                panel.innerHTML = ` <div class="detail-empty"> <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="1.5" stroke-linecap="round"> <rect x="2" y="3" width="20" height="19" rx="2"/> <line x1="2" y1="10" x2="22" y2="10"/> <line x1="2" y1="17" x2="22" y2="17"/> <line x1="8" y1="10" x2="8" y2="22"/> </svg> <p>בחר מגירה לניהול המלאי</p> </div>`;
+                panel.innerHTML = ` <div class="detail-empty animate-in"> <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="1.5" stroke-linecap="round"> <rect x="2" y="3" width="20" height="19" rx="2"/> <line x1="2" y1="10" x2="22" y2="10"/> <line x1="2" y1="17" x2="22" y2="17"/> <line x1="8" y1="10" x2="8" y2="22"/> </svg> <p>בחר מגירה לניהול המלאי</p> </div>`;
                 return;
             }
             const id = activeDrawer;
@@ -721,15 +759,17 @@
                     <button class="btn" onclick="addToDrawer('${id}')">הוסף למגירה</button>
                 </div>`;
             panel.innerHTML = `
-                <div class="detail-title">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2" stroke-linecap="round">
-                        <rect x="2" y="3" width="20" height="19" rx="2"/>
-                        <line x1="2" y1="12" x2="22" y2="12"/>
-                    </svg>
-                    ${esc(DRAWER_NAMES[id])}
-                </div>
-                <ul class="drawer-items-list">${listHtml}</ul>
-                ${addRowHtml}`;
+                <div class="animate-in">
+                    <div class="detail-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2" stroke-linecap="round">
+                            <rect x="2" y="3" width="20" height="19" rx="2"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                        </svg>
+                        ${esc(DRAWER_NAMES[id])}
+                    </div>
+                    <ul class="drawer-items-list">${listHtml}</ul>
+                    ${addRowHtml}
+                </div>`;
         }
         // ---- Render: Master Items ----
         function renderMaster() {
