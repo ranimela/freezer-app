@@ -266,6 +266,9 @@
 
         .animate-in {
             animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         /* ===== Detail Panel ===== */
@@ -432,6 +435,14 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
+        .summary-table .item-col {
+            width: 330px;
+        }
+
+        .summary-table .qty-col {
+            width: 100px;
+        }
+
         .master-chip {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--glass-border);
@@ -579,7 +590,7 @@
                 <thead>
                     <tr>
                         <th class="item-col">פריט</th>
-                        <th class="qty-col">סה"כ</th>
+                        <th class="qty-col" style="text-align:center;">סה"כ</th>
                         <th>מיקומים</th>
                     </tr>
                 </thead>
@@ -823,7 +834,7 @@
 
             body.innerHTML = itemsWithStock.map(item => `
                 <tr>
-                    <td><strong>${esc(item.name)}</strong></td>
+                    <td class="item-col"><strong>${esc(item.name)}</strong></td>
                     <td class="qty-col" style="text-align:center;">${item.total}</td>
                     <td class="loc-col" style="color:var(--text-dim); font-size:0.85rem;">
                         ${item.locations.map(loc => `
