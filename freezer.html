@@ -6,7 +6,7 @@
     <title>Freezer Manager</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Heebo:wght@300;400;500;700;800&family=Rubik:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-deep: #0f172a;
@@ -30,7 +30,7 @@
         }
 
         body {
-            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Outfit', 'Heebo', 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-deep);
             background-image: 
                 radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
@@ -202,12 +202,19 @@
             color: var(--text-main);
             font-size: 0.75rem;
             font-weight: 500;
-            padding: 4px 10px;
-            border-radius: 8px;
+            padding: 0 10px;
+            height: 26px;
+            border-radius: 6px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: right;
+            flex-shrink: 0;
+            line-height: 1;
         }
 
         .handle-wrap {
@@ -681,7 +688,7 @@
                 if (items.length > max) {
                     const d = document.createElement('div');
                     d.className = 'mini-chip more';
-                    d.textContent = '+' + (items.length - max) + ' more';
+                    d.textContent = 'עוד ' + (items.length - max) + '+';
                     chipsEl.appendChild(d);
                 }
             });
