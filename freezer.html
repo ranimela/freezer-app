@@ -58,15 +58,16 @@
 
         header p {
             color: var(--text-dim);
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 400;
+            margin-top: 8px;
         }
 
         /* ===== Layout ===== */
         .layout {
             display: flex;
-            gap: 30px;
-            max-width: 1100px;
+            gap: 40px;
+            max-width: 1200px;
             margin: 0 auto 40px;
             align-items: flex-start;
         }
@@ -101,9 +102,9 @@
         .freezer-col {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
             position: relative;
-            width: 200px;
+            width: 220px;
         }
 
         .col-left {
@@ -160,15 +161,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .drawer-label {
-            font-size: 0.7rem;
+            font-size: 0.85rem;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-dim);
+            color: var(--text-main);
+            letter-spacing: normal;
         }
 
         .count-badge {
@@ -192,7 +192,7 @@
         .drawer-chips {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
             overflow: hidden;
             flex: 1;
         }
@@ -200,10 +200,10 @@
         .mini-chip {
             background: rgba(255, 255, 255, 0.05);
             color: var(--text-main);
-            font-size: 0.65rem;
+            font-size: 0.75rem;
             font-weight: 500;
-            padding: 3px 8px;
-            border-radius: 6px;
+            padding: 4px 10px;
+            border-radius: 8px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -228,7 +228,7 @@
             flex: 1;
             background: var(--bg-accent);
             border-radius: 24px;
-            padding: 24px;
+            padding: 32px;
             box-shadow: var(--card-shadow);
             height: 520px;
             display: flex;
@@ -349,11 +349,11 @@
 
         /* ===== Master Items & Summary ===== */
         .master-section, .summary-section {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto 30px;
             background: var(--bg-accent);
             border-radius: 24px;
-            padding: 24px;
+            padding: 32px;
             box-shadow: var(--card-shadow);
             border: 1px solid var(--glass-border);
         }
