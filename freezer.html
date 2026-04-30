@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Freezer Manager</title>
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -43,7 +49,9 @@
         }
 
         /* ===== Freezer ===== */
-        .freezer-wrap { flex-shrink: 0; }
+        .freezer-wrap {
+            flex-shrink: 0;
+        }
 
         .freezer {
             background: linear-gradient(160deg, #1a2a44 0%, #0e1c32 100%);
@@ -52,10 +60,7 @@
             display: flex;
             gap: 10px;
             height: 480px;
-            box-shadow:
-                0 12px 48px rgba(0,0,0,0.45),
-                inset 0 1px 0 rgba(255,255,255,0.09),
-                inset 0 -1px 0 rgba(0,0,0,0.3);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.09), inset 0 -1px 0 rgba(0, 0, 0, 0.3);
             position: relative;
         }
 
@@ -65,8 +70,7 @@
             position: absolute;
             inset: 0;
             border-radius: 16px;
-            background: radial-gradient(ellipse at 30% 15%, rgba(150,210,255,0.07) 0%, transparent 60%),
-                        radial-gradient(ellipse at 80% 80%, rgba(100,180,255,0.05) 0%, transparent 50%);
+            background: radial-gradient(ellipse at 30% 15%, rgba(150, 210, 255, 0.07) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(100, 180, 255, 0.05) 0%, transparent 50%);
             pointer-events: none;
         }
 
@@ -79,7 +83,10 @@
         }
 
         /* divider between sides */
-        .col-left { border-right: 2px solid rgba(255,255,255,0.06); padding-right: 9px; }
+        .col-left {
+            border-left: 2px solid rgba(255, 255, 255, 0.06);
+            padding-left: 9px;
+        }
 
         .drawer {
             flex: 1;
@@ -92,13 +99,13 @@
             overflow: hidden;
             border: 2px solid transparent;
             transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s, background 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
 
         .drawer:hover {
             border-color: #90cdf4;
             transform: translateX(3px);
-            box-shadow: 0 4px 14px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.6);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
 
         .drawer.active {
@@ -107,15 +114,20 @@
         }
 
         /* Drawer sizes — small = 1 share, large = 2 shares of column height */
-        .drawer.drawer-sm { flex: 1; }
-        .drawer.drawer-lg { flex: 2; }
+        .drawer.drawer-sm {
+            flex: 1;
+        }
+
+        .drawer.drawer-lg {
+            flex: 2;
+        }
 
         /* Non-interactive filler that occupies a small-drawer slot on the right side */
         .drawer-filler {
             flex: 1;
             border-radius: 9px;
-            background: linear-gradient(170deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.12) 100%);
-            border: 1.5px dashed rgba(255,255,255,0.07);
+            background: linear-gradient(170deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.12) 100%);
+            border: 1.5px dashed rgba(255, 255, 255, 0.07);
         }
 
         .drawer-inner {
@@ -124,6 +136,15 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            text-align: right;
+        }
+
+        .drawer-sm .drawer-inner {
+            padding: 5px 9px 2px;
+        }
+
+        .drawer-sm .handle-wrap {
+            padding: 2px 9px 5px;
         }
 
         .drawer-top {
@@ -152,7 +173,10 @@
             text-align: center;
         }
 
-        .count-badge.zero { background: #cbd5e0; color: #718096; }
+        .count-badge.zero {
+            background: #cbd5e0;
+            color: #718096;
+        }
 
         .drawer-chips {
             display: flex;
@@ -163,7 +187,7 @@
         }
 
         .mini-chip {
-            background: rgba(49,130,206,0.15);
+            background: rgba(49, 130, 206, 0.15);
             color: #2b6cb0;
             font-size: 0.62rem;
             font-weight: 500;
@@ -175,7 +199,7 @@
         }
 
         .mini-chip.more {
-            background: rgba(160,174,192,0.2);
+            background: rgba(160, 174, 192, 0.2);
             color: #718096;
         }
 
@@ -190,7 +214,7 @@
             height: 5px;
             background: linear-gradient(90deg, #94a3b8, #cbd5e0 50%, #94a3b8);
             border-radius: 3px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
         }
 
         /* ===== Detail Panel ===== */
@@ -199,7 +223,7 @@
             background: white;
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 2px 14px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 14px rgba(0, 0, 0, 0.08);
             height: 480px;
             display: flex;
             flex-direction: column;
@@ -216,9 +240,14 @@
             text-align: center;
         }
 
-        .detail-empty svg { opacity: 0.25; }
+        .detail-empty svg {
+            opacity: 0.25;
+        }
 
-        .detail-empty p { font-size: 0.92rem; line-height: 1.6; }
+        .detail-empty p {
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
 
         .detail-title {
             font-size: 1rem;
@@ -261,7 +290,9 @@
             transition: background 0.12s;
         }
 
-        .drawer-items-list li:hover { background: #edf2f7; }
+        .drawer-items-list li:hover {
+            background: #edf2f7;
+        }
 
         .remove-btn {
             background: none;
@@ -276,7 +307,10 @@
             flex-shrink: 0;
         }
 
-        .remove-btn:hover { color: #e53e3e; background: #fff5f5; }
+        .remove-btn:hover {
+            color: #e53e3e;
+            background: #fff5f5;
+        }
 
         .add-row {
             display: flex;
@@ -297,9 +331,15 @@
             transition: border-color 0.2s;
         }
 
-        .add-row select:focus { border-color: #4299e1; }
+        .add-row select:focus {
+            border-color: #4299e1;
+        }
 
-        .hint { color: #a0aec0; font-size: 0.78rem; margin-top: 8px; }
+        .hint {
+            color: #a0aec0;
+            font-size: 0.78rem;
+            margin-top: 8px;
+        }
 
         /* ===== Buttons ===== */
         .btn {
@@ -313,9 +353,18 @@
             white-space: nowrap;
         }
 
-        .btn:active { transform: scale(0.96); }
-        .btn-blue { background: #4299e1; color: white; }
-        .btn-blue:hover { background: #3182ce; }
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-blue {
+            background: #4299e1;
+            color: white;
+        }
+
+        .btn-blue:hover {
+            background: #3182ce;
+        }
 
         /* ===== Master Items ===== */
         .master-section {
@@ -324,7 +373,7 @@
             background: white;
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 2px 14px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 14px rgba(0, 0, 0, 0.08);
         }
 
         .section-title {
@@ -353,8 +402,13 @@
             transition: border-color 0.2s;
         }
 
-        .add-master-row input:focus { border-color: #4299e1; }
-        .add-master-row input.error { border-color: #fc8181; }
+        .add-master-row input:focus {
+            border-color: #4299e1;
+        }
+
+        .add-master-row input.error {
+            border-color: #fc8181;
+        }
 
         .master-grid {
             display: flex;
@@ -378,7 +432,9 @@
             transition: border-color 0.15s;
         }
 
-        .master-chip:hover { border-color: #90cdf4; }
+        .master-chip:hover {
+            border-color: #90cdf4;
+        }
 
         .chip-name {
             cursor: pointer;
@@ -422,13 +478,27 @@
             padding: 0;
         }
 
-        .icon-btn:hover { background: #edf2f7; color: #4a5568; }
-        .icon-btn.del:hover { background: #fff5f5; color: #e53e3e; }
+        .icon-btn:hover {
+            background: #edf2f7;
+            color: #4a5568;
+        }
 
-        .empty-note { color: #a0aec0; font-size: 0.875rem; }
+        .icon-btn.del:hover {
+            background: #fff5f5;
+            color: #e53e3e;
+        }
+
+        .empty-note {
+            color: #a0aec0;
+            font-size: 0.875rem;
+        }
 
         /* ===== Loading overlay ===== */
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
         #loading-overlay {
             position: fixed;
@@ -453,169 +523,302 @@
             animation: spin 0.75s linear infinite;
         }
 
-        #loading-overlay.error { gap: 8px; }
-        #loading-overlay .err-icon { font-size: 2rem; }
-        #loading-overlay .err-msg  { font-size: 0.82rem; color: #718096; max-width: 280px; text-align: center; }
-    </style>
+        #loading-overlay.error {
+            gap: 8px;
+        }
 
+        #loading-overlay .err-icon {
+            font-size: 2rem;
+        }
+
+        #loading-overlay .err-msg {
+            font-size: 0.82rem;
+            color: #718096;
+            max-width: 280px;
+            text-align: center;
+        }
+        /* ===== Summary Section ===== */
+        .summary-section {
+            max-width: 940px;
+            margin: 0 auto 24px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 14px rgba(0, 0, 0, 0.08);
+        }
+
+        .summary-table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: right;
+        }
+
+        .summary-table th {
+            padding: 10px;
+            border-bottom: 2px solid #edf2f7;
+            color: #718096;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #edf2f7;
+            color: #2d3748;
+        }
+
+        .summary-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .summary-table .qty-col {
+            width: 100px;
+            text-align: center;
+        }
+
+        .summary-table .item-col {
+            width: 330px;
+            white-space: nowrap;
+        }
+
+        .summary-table .loc-col {
+            color: #718096;
+            font-size: 0.8rem;
+        }
+
+        .loc-tag {
+            display: inline-block;
+            background: #ebf8ff;
+            color: #3182ce;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* ===== Mobile Responsiveness ===== */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px 10px 30px;
+            }
+
+            .layout {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .freezer-wrap {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+            .detail-panel {
+                width: 100%;
+                height: auto;
+                min-height: 300px;
+            }
+
+            .freezer {
+                height: 420px;
+            }
+
+            .freezer-col {
+                width: 150px;
+            }
+        }
+    </style>
     <!-- Firebase v10 compat — no build tools needed -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
-
-<!-- Shown until the first Firestore snapshot arrives -->
-<div id="loading-overlay">
-    <div class="spinner"></div>
-    Connecting&hellip;
-</div>
-
-<header>
-    <h1>&#10052; Freezer Manager</h1>
-    <p>Track what's in every drawer</p>
-</header>
-
-<div class="layout">
-
-    <!-- Freezer Visual -->
-    <div class="freezer-wrap">
-        <div class="freezer">
-            <!-- Left: 2 small + 1 large drawer -->
-            <div class="freezer-col col-left">
-                <div class="drawer drawer-sm" id="drawer-L1" onclick="selectDrawer('L1')">
-                    <div class="drawer-inner">
-                        <div class="drawer-top">
-                            <span class="drawer-label">Left 1</span>
-                            <span class="count-badge zero" id="badge-L1">0</span>
+    <!-- Shown until the first Firestore snapshot arrives -->
+    <div id="loading-overlay">
+        <div class="spinner"></div> Connecting&hellip;
+    </div>
+    <header>
+        <h1>&#10052; מנהל המקפיא</h1>
+        <p>מעקב אחר תכולת המגירות</p>
+    </header>
+    <div class="layout">
+        <!-- Freezer Visual -->
+        <div class="freezer-wrap">
+            <div class="freezer">
+                <!-- Right: filler (top) + 1 small + 1 large drawer -->
+                <div class="freezer-col col-right">
+                    <div class="drawer-filler"></div>
+                    <div class="drawer drawer-sm" id="drawer-R1" onclick="selectDrawer('R1')">
+                        <div class="drawer-inner">
+                            <div class="drawer-top">
+                                <span class="drawer-label">ימין 1</span>
+                                <span class="count-badge zero" id="badge-R1">0</span>
+                            </div>
+                            <div class="drawer-chips" id="chips-R1"></div>
                         </div>
-                        <div class="drawer-chips" id="chips-L1"></div>
+                        <div class="handle-wrap">
+                            <div class="handle"></div>
+                        </div>
                     </div>
-                    <div class="handle-wrap"><div class="handle"></div></div>
+                    <div class="drawer drawer-lg" id="drawer-R2" onclick="selectDrawer('R2')">
+                        <div class="drawer-inner">
+                            <div class="drawer-top">
+                                <span class="drawer-label">ימין 2</span>
+                                <span class="count-badge zero" id="badge-R2">0</span>
+                            </div>
+                            <div class="drawer-chips" id="chips-R2"></div>
+                        </div>
+                        <div class="handle-wrap">
+                            <div class="handle"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="drawer drawer-sm" id="drawer-L2" onclick="selectDrawer('L2')">
-                    <div class="drawer-inner">
-                        <div class="drawer-top">
-                            <span class="drawer-label">Left 2</span>
-                            <span class="count-badge zero" id="badge-L2">0</span>
+                <!-- Left: 2 small + 1 large drawer -->
+                <div class="freezer-col col-left">
+                    <div class="drawer drawer-sm" id="drawer-L1" onclick="selectDrawer('L1')">
+                        <div class="drawer-inner">
+                            <div class="drawer-top">
+                                <span class="drawer-label">שמאל 1</span>
+                                <span class="count-badge zero" id="badge-L1">0</span>
+                            </div>
+                            <div class="drawer-chips" id="chips-L1"></div>
                         </div>
-                        <div class="drawer-chips" id="chips-L2"></div>
-                    </div>
-                    <div class="handle-wrap"><div class="handle"></div></div>
-                </div>
-                <div class="drawer drawer-lg" id="drawer-L3" onclick="selectDrawer('L3')">
-                    <div class="drawer-inner">
-                        <div class="drawer-top">
-                            <span class="drawer-label">Left 3</span>
-                            <span class="count-badge zero" id="badge-L3">0</span>
+                        <div class="handle-wrap">
+                            <div class="handle"></div>
                         </div>
-                        <div class="drawer-chips" id="chips-L3"></div>
                     </div>
-                    <div class="handle-wrap"><div class="handle"></div></div>
-                </div>
-            </div>
-
-            <!-- Right: filler (top) + 1 small + 1 large drawer -->
-            <div class="freezer-col col-right">
-                <div class="drawer-filler"></div>
-                <div class="drawer drawer-sm" id="drawer-R1" onclick="selectDrawer('R1')">
-                    <div class="drawer-inner">
-                        <div class="drawer-top">
-                            <span class="drawer-label">Right 1</span>
-                            <span class="count-badge zero" id="badge-R1">0</span>
+                    <div class="drawer drawer-sm" id="drawer-L2" onclick="selectDrawer('L2')">
+                        <div class="drawer-inner">
+                            <div class="drawer-top">
+                                <span class="drawer-label">שמאל 2</span>
+                                <span class="count-badge zero" id="badge-L2">0</span>
+                            </div>
+                            <div class="drawer-chips" id="chips-L2"></div>
                         </div>
-                        <div class="drawer-chips" id="chips-R1"></div>
-                    </div>
-                    <div class="handle-wrap"><div class="handle"></div></div>
-                </div>
-                <div class="drawer drawer-lg" id="drawer-R2" onclick="selectDrawer('R2')">
-                    <div class="drawer-inner">
-                        <div class="drawer-top">
-                            <span class="drawer-label">Right 2</span>
-                            <span class="count-badge zero" id="badge-R2">0</span>
+                        <div class="handle-wrap">
+                            <div class="handle"></div>
                         </div>
-                        <div class="drawer-chips" id="chips-R2"></div>
                     </div>
-                    <div class="handle-wrap"><div class="handle"></div></div>
+                    <div class="drawer drawer-lg" id="drawer-L3" onclick="selectDrawer('L3')">
+                        <div class="drawer-inner">
+                            <div class="drawer-top">
+                                <span class="drawer-label">שמאל 3</span>
+                                <span class="count-badge zero" id="badge-L3">0</span>
+                            </div>
+                            <div class="drawer-chips" id="chips-L3"></div>
+                        </div>
+                        <div class="handle-wrap">
+                            <div class="handle"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Detail Panel -->
-    <div class="detail-panel" id="detail-panel">
-        <div class="detail-empty">
-            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="1.4" stroke-linecap="round">
-                <rect x="2" y="3" width="20" height="19" rx="2"/>
-                <line x1="2" y1="10" x2="22" y2="10"/>
-                <line x1="2" y1="17" x2="22" y2="17"/>
-                <line x1="8"  y1="10" x2="8"  y2="22"/>
-            </svg>
-            <p>Click a drawer to view<br>and manage its contents</p>
+        <!-- Detail Panel -->
+        <div class="detail-panel" id="detail-panel">
+            <div class="detail-empty">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="1.4" stroke-linecap="round">
+                    <rect x="2" y="3" width="20" height="19" rx="2" />
+                    <line x1="2" y1="10" x2="22" y2="10" />
+                    <line x1="2" y1="17" x2="22" y2="17" />
+                    <line x1="8" y1="10" x2="8" y2="22" />
+                </svg>
+                <p>לחץ על מגירה כדי לצפות<br>ולנהל את תכולתה</p>
+            </div>
         </div>
     </div>
-</div>
-
-<!-- Master Items -->
-<div class="master-section">
-    <div class="section-title">&#128230; Master Items List</div>
-    <div class="add-master-row">
-        <input type="text" id="new-item-input"
-               placeholder="New item name (e.g. Chicken Thighs)..."
-               onkeydown="if(event.key==='Enter') addMasterItem()">
-        <button class="btn btn-blue" onclick="addMasterItem()">+ Add Item</button>
+    <!-- Inventory Summary -->
+    <div class="summary-section" id="summary-section">
+        <div class="section-title">&#128203; סיכום מלאי</div>
+        <div class="summary-table-wrap">
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th class="item-col">פריט</th>
+                        <th class="qty-col">סה"כ</th>
+                        <th>מיקומים</th>
+                    </tr>
+                </thead>
+                <tbody id="summary-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div class="master-grid" id="master-grid">
-        <span class="empty-note">No items yet — add your first item above.</span>
+    <!-- Master Items -->
+    <div class="master-section">
+        <div class="section-title">&#128230; רשימת פריטים כללית</div>
+        <div class="add-master-row">
+            <input type="text" id="new-item-input" placeholder="שם פריט חדש (למשל כרעיים)..." onkeydown="if(event.key==='Enter') addMasterItem()">
+            <button class="btn btn-blue" onclick="addMasterItem()">+ הוסף פריט</button>
+        </div>
+        <div class="master-grid" id="master-grid">
+            <span class="empty-note">No items yet — add your first item above.</span>
+        </div>
     </div>
-</div>
-
-<script>
-    // ---- Firebase setup ----
-    const firebaseConfig = {
-        apiKey: "AIzaSyCdSpsitmhYp_2RJHF45sY6jx8JuK7Sxlw",
-        authDomain: "freezer-app-ce27f.firebaseapp.com",
-        projectId: "freezer-app-ce27f",
-        storageBucket: "freezer-app-ce27f.firebasestorage.app",
-        messagingSenderId: "1077631987632",
-        appId: "1:1077631987632:web:ab8f7e6c412f2cbf093075",
-        measurementId: "G-XMPYWFRJWY"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    // Single document holds the full app state
-    const docRef = db.collection('freezer').doc('data');
-
-    // ---- Constants ----
-    const DRAWERS = ['L1', 'L2', 'L3', 'R1', 'R2'];
-    const DRAWER_SIZES = { L1: 'sm', L2: 'sm', L3: 'lg', R1: 'sm', R2: 'lg' };
-    const DRAWER_NAMES = {
-        L1: 'Left Drawer 1 \u2014 Top',
-        L2: 'Left Drawer 2 \u2014 Middle',
-        L3: 'Left Drawer 3 \u2014 Bottom',
-        R1: 'Right Drawer 1 \u2014 Top',
-        R2: 'Right Drawer 2 \u2014 Bottom',
-    };
-
-    // ---- State ----
-    let state = {
-        items: [],
-        drawers: { L1: [], L2: [], L3: [], R1: [], R2: [] }
-    };
-
-    let activeDrawer = null;
-    // Prevents remote snapshots from clobbering an in-progress inline edit
-    let isEditing = false;
-
-    // ---- Persistence: write full state to Firestore ----
-    function persist() {
-        docRef.set({ items: state.items, drawers: state.drawers })
-              .catch(err => console.error('Firestore write error:', err));
-    }
-
-    // ---- Real-time listener ----
-    docRef.onSnapshot(
-        (doc) => {
+    <script>
+        // ---- Firebase setup ----
+        const firebaseConfig = {
+            apiKey: "AIzaSyCdSpsitmhYp_2RJHF45sY6jx8JuK7Sxlw",
+            authDomain: "freezer-app-ce27f.firebaseapp.com",
+            projectId: "freezer-app-ce27f",
+            storageBucket: "freezer-app-ce27f.firebasestorage.app",
+            messagingSenderId: "1077631987632",
+            appId: "1:1077631987632:web:ab8f7e6c412f2cbf093075",
+            measurementId: "G-XMPYWFRJWY"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        // Single document holds the full app state
+        const docRef = db.collection('freezer').doc('data');
+        // ---- Constants ----
+        const DRAWERS = ['L1', 'L2', 'L3', 'R1', 'R2'];
+        const DRAWER_SIZES = {
+            L1: 'sm',
+            L2: 'sm',
+            L3: 'lg',
+            R1: 'sm',
+            R2: 'lg'
+        };
+        const DRAWER_NAMES = {
+            L1: 'שמאל 1',
+            L2: 'שמאל 2',
+            L3: 'שמאל 3',
+            R1: 'ימין 1',
+            R2: 'ימין 2',
+        };
+        // ---- State ----
+        let state = {
+            items: [],
+            drawers: {
+                L1: [],
+                L2: [],
+                L3: [],
+                R1: [],
+                R2: []
+            }
+        };
+        let activeDrawer = null; // Prevents remote snapshots from clobbering an in-progress inline edit
+        let isEditing = false;
+        // ---- Persistence: write full state to Firestore ----
+        function persist() {
+            docRef.set({
+                    items: state.items,
+                    drawers: state.drawers
+                })
+                .catch(err => console.error('Firestore write error:', err));
+        }
+        // ---- Real-time listener ----
+        docRef.onSnapshot((doc) => {
             // Merge remote data into local state
             if (doc.exists) {
                 const d = doc.data();
@@ -624,247 +827,238 @@
                     state.drawers[id] = Array.isArray(d.drawers?.[id]) ? d.drawers[id] : [];
                 });
             }
-
             // Hide loading overlay on first snapshot
             const overlay = document.getElementById('loading-overlay');
             if (overlay) overlay.style.display = 'none';
-
             // Don't re-render while the user is typing in an inline edit field
             if (!isEditing) renderAll();
-        },
-        (err) => {
+        }, (err) => {
             console.error('Firestore error:', err);
             const overlay = document.getElementById('loading-overlay');
             if (overlay) {
                 overlay.classList.add('error');
-                overlay.innerHTML =
-                    '<div class="err-icon">&#9888;</div>' +
+                overlay.innerHTML = '<div class="err-icon">&#9888;</div>' +
                     '<strong style="color:#c53030">Could not connect to Firestore</strong>' +
                     '<div class="err-msg">' + esc(err.message) + '</div>';
             }
-        }
-    );
-
-    // ---- Escape HTML ----
-    function esc(s) {
-        return String(s)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;');
-    }
-
-    // ---- Render: Freezer drawers ----
-    function renderDrawers() {
-        DRAWERS.forEach(id => {
-            const items = state.drawers[id];
-
-            const badge = document.getElementById('badge-' + id);
-            badge.textContent = items.length;
-            badge.className = 'count-badge' + (items.length === 0 ? ' zero' : '');
-
-            const chipsEl = document.getElementById('chips-' + id);
-            chipsEl.innerHTML = '';
-            const max = DRAWER_SIZES[id] === 'lg' ? 6 : 3;
-            items.slice(0, max).forEach(item => {
-                const d = document.createElement('div');
-                d.className = 'mini-chip';
-                d.textContent = item;
-                d.title = item;
-                chipsEl.appendChild(d);
-            });
-            if (items.length > max) {
-                const d = document.createElement('div');
-                d.className = 'mini-chip more';
-                d.textContent = '+' + (items.length - max) + ' more';
-                chipsEl.appendChild(d);
-            }
         });
-    }
-
-    // ---- Render: Detail panel ----
-    function renderDetail() {
-        const panel = document.getElementById('detail-panel');
-
-        if (!activeDrawer) {
-            panel.innerHTML = `
-                <div class="detail-empty">
-                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="1.4" stroke-linecap="round">
-                        <rect x="2" y="3" width="20" height="19" rx="2"/>
-                        <line x1="2" y1="10" x2="22" y2="10"/>
-                        <line x1="2" y1="17" x2="22" y2="17"/>
-                        <line x1="8" y1="10" x2="8" y2="22"/>
-                    </svg>
-                    <p>Click a drawer to view<br>and manage its contents</p>
-                </div>`;
-            return;
+        // ---- Escape HTML ----
+        function esc(s) {
+            return String(s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
         }
-
-        const id = activeDrawer;
-        const items = state.drawers[id];
-
-        const listHtml = items.map((item, idx) => `
-            <li>
-                <span>${esc(item)}</span>
-                <button class="remove-btn"
-                        onclick="removeFromDrawer('${id}',${idx})"
-                        title="Remove from drawer">&#10005;</button>
-            </li>`).join('');
-
-        const addRowHtml = state.items.length === 0
-            ? `<p class="hint">Add items to the Master List below, then come back to add them here.</p>`
-            : `<div class="add-row">
-                    <select id="add-select">
-                        <option value="">&#8212; pick an item &#8212;</option>
-                        ${state.items.map(i => `<option value="${esc(i)}">${esc(i)}</option>`).join('')}
-                    </select>
-                    <button class="btn btn-blue" onclick="addToDrawer('${id}')">Add</button>
-               </div>`;
-
-        panel.innerHTML = `
-            <div class="detail-title">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4299e1" stroke-width="2.5" stroke-linecap="round">
-                    <rect x="2" y="3" width="20" height="19" rx="2"/>
-                    <line x1="2" y1="12" x2="22" y2="12"/>
-                </svg>
-                ${esc(DRAWER_NAMES[id])}
-            </div>
-            <ul class="drawer-items-list">${listHtml}</ul>
-            ${addRowHtml}`;
-    }
-
-    // ---- Render: Master Items ----
-    function renderMaster() {
-        const grid = document.getElementById('master-grid');
-
-        if (state.items.length === 0) {
-            grid.innerHTML = '<span class="empty-note">No items yet &#8212; add your first item above.</span>';
-            return;
-        }
-
-        grid.innerHTML = '';
-        state.items.forEach((item, idx) => {
-            const inCount = DRAWERS.filter(d => state.drawers[d].includes(item)).length;
-
-            const chip = document.createElement('div');
-            chip.className = 'master-chip';
-            chip.id = 'mchip-' + idx;
-            chip.innerHTML =
-                `<span class="chip-name" onclick="startEdit(${idx})" title="Click to rename">${esc(item)}</span>` +
-                (inCount > 0 ? `<span class="in-drawers" title="In ${inCount} drawer(s)">&#215;${inCount}</span>` : '') +
-                `<button class="icon-btn" onclick="startEdit(${idx})" title="Rename">&#9998;</button>` +
-                `<button class="icon-btn del" onclick="deleteMaster(${idx})" title="Delete item">&#10005;</button>`;
-
-            grid.appendChild(chip);
-        });
-    }
-
-    function renderAll() {
-        renderDrawers();
-        renderDetail();
-        renderMaster();
-    }
-
-    // ---- Actions ----
-    function selectDrawer(id) {
-        if (activeDrawer && activeDrawer !== id) {
-            document.getElementById('drawer-' + activeDrawer).classList.remove('active');
-        }
-        activeDrawer = id;
-        document.getElementById('drawer-' + id).classList.add('active');
-        renderDetail();
-    }
-
-    function addToDrawer(id) {
-        const sel = document.getElementById('add-select');
-        if (!sel) return;
-        const item = sel.value;
-        if (!item) return;
-        state.drawers[id].push(item);
-        persist();
-        renderAll();
-    }
-
-    function removeFromDrawer(id, idx) {
-        state.drawers[id].splice(idx, 1);
-        persist();
-        renderAll();
-    }
-
-    function addMasterItem() {
-        const input = document.getElementById('new-item-input');
-        const name = input.value.trim();
-        if (!name) return;
-
-        const dupe = state.items.some(i => i.toLowerCase() === name.toLowerCase());
-        if (dupe) {
-            input.classList.add('error');
-            input.title = 'Item already exists';
-            setTimeout(() => { input.classList.remove('error'); input.title = ''; }, 2000);
-            return;
-        }
-
-        state.items.push(name);
-        state.items.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-        persist();
-        input.value = '';
-        renderAll();
-    }
-
-    function deleteMaster(idx) {
-        const item = state.items[idx];
-        DRAWERS.forEach(d => {
-            state.drawers[d] = state.drawers[d].filter(i => i !== item);
-        });
-        state.items.splice(idx, 1);
-        persist();
-        renderAll();
-    }
-
-    function startEdit(idx) {
-        const chip = document.getElementById('mchip-' + idx);
-        if (!chip) return;
-        const nameSpan = chip.querySelector('.chip-name');
-        if (!nameSpan) return;
-
-        const oldName = state.items[idx];
-        const inp = document.createElement('input');
-        inp.type = 'text';
-        inp.className = 'chip-edit-input';
-        inp.value = oldName;
-        nameSpan.replaceWith(inp);
-        inp.focus();
-        inp.select();
-
-        // Block remote re-renders while the user is typing
-        isEditing = true;
-        let done = false;
-
-        function commit() {
-            if (done) return;
-            done = true;
-            isEditing = false;
-            const newName = inp.value.trim();
-            const conflict = state.items.some((s, i) =>
-                i !== idx && s.toLowerCase() === newName.toLowerCase());
-            if (newName && newName !== oldName && !conflict) {
-                DRAWERS.forEach(d => {
-                    state.drawers[d] = state.drawers[d].map(s => s === oldName ? newName : s);
+        // ---- Render: Freezer drawers ----
+        function renderDrawers() {
+            DRAWERS.forEach(id => {
+                const items = state.drawers[id];
+                const badge = document.getElementById('badge-' + id);
+                badge.textContent = items.length;
+                badge.className = 'count-badge' + (items.length === 0 ? ' zero' : '');
+                const chipsEl = document.getElementById('chips-' + id);
+                chipsEl.innerHTML = '';
+                const max = DRAWER_SIZES[id] === 'lg' ? 6 : 3;
+                items.slice(0, max).forEach(item => {
+                    const d = document.createElement('div');
+                    d.className = 'mini-chip';
+                    d.textContent = item;
+                    d.title = item;
+                    chipsEl.appendChild(d);
                 });
-                state.items[idx] = newName;
-                state.items.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-                persist();
+                if (items.length > max) {
+                    const d = document.createElement('div');
+                    d.className = 'mini-chip more';
+                    d.textContent = '+' + (items.length - max) + ' more';
+                    chipsEl.appendChild(d);
+                }
+            });
+        }
+        // ---- Render: Detail panel ----
+        function renderDetail() {
+            const panel = document.getElementById('detail-panel');
+            if (!activeDrawer) {
+                panel.innerHTML = ` <div class="detail-empty"> <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="1.4" stroke-linecap="round"> <rect x="2" y="3" width="20" height="19" rx="2"/> <line x1="2" y1="10" x2="22" y2="10"/> <line x1="2" y1="17" x2="22" y2="17"/> <line x1="8" y1="10" x2="8" y2="22"/> </svg> <p>Click a drawer to view<br>and manage its contents</p> </div>`;
+                return;
             }
+            const id = activeDrawer;
+            const items = state.drawers[id];
+            const listHtml = items.map((item, idx) => ` <li> <span>${esc(item)}</span> <button class="remove-btn" onclick="removeFromDrawer('${id}',${idx})" title="Remove from drawer">&#10005;</button> </li>`).join('');
+            const addRowHtml = state.items.length === 0 ? `<p class="hint">Add items to the Master List below, then come back to add them here.</p>` : `<div class="add-row"> <select id="add-select"> <option value="">&#8212; pick an item &#8212;</option> ${state.items.map(i => `<option value="${esc(i)}">${esc(i)}</option>`).join('')} </select> <button class="btn btn-blue" onclick="addToDrawer('${id}')">Add</button> </div>`;
+            panel.innerHTML = ` <div class="detail-title"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4299e1" stroke-width="2.5" stroke-linecap="round"> <rect x="2" y="3" width="20" height="19" rx="2"/> <line x1="2" y1="12" x2="22" y2="12"/> </svg> ${esc(DRAWER_NAMES[id])} </div> <ul class="drawer-items-list">${listHtml}</ul> ${addRowHtml}`;
+        }
+        // ---- Render: Master Items ----
+        function renderMaster() {
+            const grid = document.getElementById('master-grid');
+            if (state.items.length === 0) {
+                grid.innerHTML = '<span class="empty-note">No items yet &#8212; add your first item above.</span>';
+                return;
+            }
+            grid.innerHTML = '';
+            state.items.forEach((item, idx) => {
+                const inCount = DRAWERS.filter(d => state.drawers[d].includes(item)).length;
+                const chip = document.createElement('div');
+                chip.className = 'master-chip';
+                chip.id = 'mchip-' + idx;
+                chip.innerHTML = `<span class="chip-name" onclick="startEdit(${idx})" title="Click to rename">${esc(item)}</span>` + (inCount > 0 ? `<span class="in-drawers" title="In ${inCount} drawer(s)">&#215;${inCount}</span>` : '') + `<button class="icon-btn" onclick="startEdit(${idx})" title="Rename">&#9998;</button>` + `<button class="icon-btn del" onclick="deleteMaster(${idx})" title="Delete item">&#10005;</button>`;
+                grid.appendChild(chip);
+            });
+        }
+
+        // ---- Render: Summary Table ----
+        function renderSummary() {
+            const body = document.getElementById('summary-body');
+            if (!body) return;
+
+            const itemsWithStock = state.items.map(item => {
+                const locations = [];
+                let total = 0;
+                DRAWERS.forEach(d => {
+                    const count = state.drawers[d].filter(i => i === item).length;
+                    if (count > 0) {
+                        locations.push({
+                            id: d,
+                            count
+                        });
+                        total += count;
+                    }
+                });
+                return {
+                    name: item,
+                    total,
+                    locations
+                };
+            }).filter(i => i.total > 0);
+
+            if (itemsWithStock.length === 0) {
+                body.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#a0aec0; padding:20px;">No items in freezer yet.</td></tr>';
+                return;
+            }
+
+            body.innerHTML = itemsWithStock.map(item => `
+                <tr>
+                    <td><strong>${esc(item.name)}</strong></td>
+                    <td class="qty-col">${item.total}</td>
+                    <td class="loc-col">
+                        ${item.locations.map(loc => `${loc.id}${loc.count > 1 ? ` (${loc.count})` : ''}`).join(', ')}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderAll() {
+            renderDrawers();
+            renderDetail();
+            renderMaster();
+            renderSummary();
+        }
+        // ---- Actions ----
+        function selectDrawer(id) {
+            if (activeDrawer && activeDrawer !== id) {
+                document.getElementById('drawer-' + activeDrawer).classList.remove('active');
+            }
+            activeDrawer = id;
+            document.getElementById('drawer-' + id).classList.add('active');
+            renderDetail();
+        }
+
+        function addToDrawer(id) {
+            const sel = document.getElementById('add-select');
+            if (!sel) return;
+            const item = sel.value;
+            if (!item) return;
+            state.drawers[id].push(item);
+            persist();
             renderAll();
         }
 
-        inp.addEventListener('blur', commit);
-        inp.addEventListener('keydown', e => {
-            if (e.key === 'Enter') inp.blur();
-            if (e.key === 'Escape') { done = true; isEditing = false; renderAll(); }
-        });
-    }
-</script>
+        function removeFromDrawer(id, idx) {
+            state.drawers[id].splice(idx, 1);
+            persist();
+            renderAll();
+        }
 
+        function addMasterItem() {
+            const input = document.getElementById('new-item-input');
+            const name = input.value.trim();
+            if (!name) return;
+            const dupe = state.items.some(i => i.toLowerCase() === name.toLowerCase());
+            if (dupe) {
+                input.classList.add('error');
+                input.title = 'Item already exists';
+                setTimeout(() => {
+                    input.classList.remove('error');
+                    input.title = '';
+                }, 2000);
+                return;
+            }
+            state.items.push(name);
+            state.items.sort((a, b) => a.localeCompare(b, undefined, {
+                sensitivity: 'base'
+            }));
+            persist();
+            input.value = '';
+            renderAll();
+        }
+
+        function deleteMaster(idx) {
+            const item = state.items[idx];
+            DRAWERS.forEach(d => {
+                state.drawers[d] = state.drawers[d].filter(i => i !== item);
+            });
+            state.items.splice(idx, 1);
+            persist();
+            renderAll();
+        }
+
+        function startEdit(idx) {
+            const chip = document.getElementById('mchip-' + idx);
+            if (!chip) return;
+            const nameSpan = chip.querySelector('.chip-name');
+            if (!nameSpan) return;
+            const oldName = state.items[idx];
+            const inp = document.createElement('input');
+            inp.type = 'text';
+            inp.className = 'chip-edit-input';
+            inp.value = oldName;
+            nameSpan.replaceWith(inp);
+            inp.focus();
+            inp.select();
+
+            // Block remote re-renders while the user is typing
+            isEditing = true;
+            let done = false;
+
+            function commit() {
+                if (done) return;
+                done = true;
+                isEditing = false;
+                const newName = inp.value.trim();
+                const conflict = state.items.some((s, i) => i !== idx && s.toLowerCase() === newName.toLowerCase());
+                if (newName && newName !== oldName && !conflict) {
+                    DRAWERS.forEach(d => {
+                        state.drawers[d] = state.drawers[d].map(s => s === oldName ? newName : s);
+                    });
+                    state.items[idx] = newName;
+                    state.items.sort((a, b) => a.localeCompare(b, undefined, {
+                        sensitivity: 'base'
+                    }));
+                    persist();
+                }
+                renderAll();
+            }
+
+            inp.addEventListener('blur', commit);
+            inp.addEventListener('keydown', e => {
+                if (e.key === 'Enter') inp.blur();
+                if (e.key === 'Escape') {
+                    done = true;
+                    isEditing = false;
+                    renderAll();
+                }
+            });
+        }
+    </script>
 </body>
 </html>
