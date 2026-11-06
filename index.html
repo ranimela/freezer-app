@@ -1,11 +1,1011 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="he" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=freezer.html">
-    <title>מפנה למקפיא...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>בררר</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Heebo:wght@300;400;500;700;800&family=Rubik:wght@300;400;500;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0f172a;
+            --bg-accent: #1e293b;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.4);
+            --drawer-bg: linear-gradient(170deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+            --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', 'Heebo', 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-deep);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.05) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 20px;
+            line-height: 1.5;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to bottom right, #fff 30%, var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-top: 8px;
+        }
+
+        /* ===== Layout ===== */
+        .layout {
+            display: flex;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto 40px;
+            align-items: flex-start;
+        }
+
+        /* ===== Freezer Visual ===== */
+        .freezer-wrap {
+            flex-shrink: 0;
+        }
+
+        .freezer {
+            background: #1e293b;
+            border-radius: 24px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            height: 520px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6),
+                inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            position: relative;
+            border: 1px solid var(--glass-border);
+        }
+
+        .freezer::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .freezer-col {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            width: 220px;
+        }
+
+        .col-left {
+            border-left: 1px solid var(--glass-border);
+            padding-left: 12px;
+        }
+
+        .drawer {
+            flex: 1;
+            background: var(--drawer-bg);
+            backdrop-filter: blur(8px);
+            border-radius: 14px;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .drawer:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .drawer.active {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 30px var(--accent-glow), inset 0 0 15px rgba(56, 189, 248, 0.1);
+        }
+
+        .drawer.drawer-sm {
+            flex: 1;
+        }
+
+        .drawer.drawer-lg {
+            flex: 1.8;
+        }
+
+        .drawer-filler {
+            flex: 1;
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px dashed var(--glass-border);
+        }
+
+        .drawer-inner {
+            flex: 1;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .drawer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .drawer-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: normal;
+        }
+
+        .count-badge {
+            background: var(--accent-blue);
+            color: var(--bg-deep);
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 20px;
+            min-width: 24px;
+            text-align: center;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .count-badge.zero {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-dim);
+            box-shadow: none;
+        }
+
+        .drawer-chips {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .mini-chip {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0 10px;
+            height: 26px;
+            border-radius: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: right;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
+        .handle-wrap {
+            padding: 4px 12px 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .handle {
+            width: 40%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .drawer:hover .handle {
+            background: var(--accent-blue);
+            width: 50%;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== Detail Panel ===== */
+        .detail-panel {
+            flex: 1;
+            background: var(--bg-accent);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: var(--card-shadow);
+            height: 520px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+        }
+
+        .detail-empty {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            color: var(--text-dim);
+            text-align: center;
+        }
+
+        .detail-empty svg {
+            filter: drop-shadow(0 0 10px var(--accent-glow));
+        }
+
+        .detail-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            padding-bottom: 16px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .drawer-items-list {
+            list-style: none;
+            overflow-y: auto;
+            flex: 1;
+            margin-bottom: 20px;
+            padding-right: 4px;
+        }
+
+        .drawer-items-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .drawer-items-list li:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--glass-border);
+        }
+
+        /* Quantity Stepper */
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .step-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.15s;
+        }
+
+        .step-btn:hover {
+            background: var(--accent-blue);
+            color: var(--bg-deep);
+        }
+
+        .qty-val {
+            font-weight: 700;
+            min-width: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .add-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        select,
+        input {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* ===== Master Items & Summary ===== */
+        .master-section,
+        .summary-section {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            background: var(--bg-accent);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--glass-border);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .summary-table th {
+            text-align: right;
+            padding: 12px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .summary-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .summary-table .item-col {
+            width: 330px;
+        }
+
+        .summary-table .qty-col {
+            width: 100px;
+        }
+
+        .master-chip {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 8px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 4px;
+            transition: all 0.2s;
+        }
+
+        .master-chip:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-blue);
+        }
+
+        .btn {
+            background: var(--accent-blue);
+            color: var(--bg-deep);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--accent-glow);
+        }
+
+        /* ===== Mobile Responsiveness ===== */
+        @media (max-width: 768px) {
+            .layout {
+                flex-direction: column;
+            }
+
+            .freezer-col {
+                width: 160px;
+            }
+
+            .freezer {
+                height: 460px;
+            }
+
+            .detail-panel {
+                height: auto;
+                min-height: 400px;
+            }
+        }
+    </style>
+    <!-- Firebase v10 compat — no build tools needed -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
+
 <body>
-    <p>מפנה למקפיא... אם לא הועברת אוטומטית, לחץ <a href="freezer.html">כאן</a>.</p>
+    <!-- Shown until the first Firestore snapshot arrives -->
+    <div id="loading-overlay">
+        <div class="spinner"></div> Connecting&hellip;
+    </div>
+    <header>
+        <h1>&#10052; בררר</h1>
+    </header>
+    <div class="layout">
+        <!-- Freezer Visual -->
+        <div class="freezer-wrap">
+            <div class="freezer">
+                <!-- Right: filler (top) + 1 small + 1 large drawer -->
+                <div class="freezer-col col-right">
+                    <div class="drawer-filler"></div>
+                    <div class="drawer drawer-sm" id="drawer-R1" onclick="selectDrawer('R1')">
+                        <div class="drawer-inner">
+                            <div class="drawer-top">
+                                <span class="drawer-label">ימין 1</span>
+                                <span class="count-badge zero" id="badge-R1">0</span>
+                            </div>
+                            <div class="drawer-chips" id="chips-R1"></div>
+                        </div>
+                        <div class="handle-wrap">
+                            <div class="handle"></div>
+                        </div>
+                    </div>
+                    <div class="drawer drawer-lg" id="drawer-R2" onclick="selectDrawer('R2')">
+                        <div class="drawer-inner">
+                            <div class="drawer-top">
+                                <span class="drawer-label">ימין 2</span>
+                                <span class="count-badge zero" id="badge-R2">0</span>
+                            </div>
+                            <div class="drawer-chips" id="chips-R2"></div>
+                        </div>
+                        <div class="handle-wrap">
+                            <div class="handle"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Left: 2 small + 1 large drawer -->
+                <div class="freezer-col col-left">
+                    <div class="drawer drawer-sm" id="drawer-L1" onclick="selectDrawer('L1')">
+                        <div class="drawer-inner">
+                            <div class="drawer-top">
+                                <span class="drawer-label">שמאל 1</span>
+                                <span class="count-badge zero" id="badge-L1">0</span>
+                            </div>
+                            <div class="drawer-chips" id="chips-L1"></div>
+                        </div>
+                        <div class="handle-wrap">
+                            <div class="handle"></div>
+                        </div>
+                    </div>
+                    <div class="drawer drawer-sm" id="drawer-L2" onclick="selectDrawer('L2')">
+                        <div class="drawer-inner">
+                            <div class="drawer-top">
+                                <span class="drawer-label">שמאל 2</span>
+                                <span class="count-badge zero" id="badge-L2">0</span>
+                            </div>
+                            <div class="drawer-chips" id="chips-L2"></div>
+                        </div>
+                        <div class="handle-wrap">
+                            <div class="handle"></div>
+                        </div>
+                    </div>
+                    <div class="drawer drawer-lg" id="drawer-L3" onclick="selectDrawer('L3')">
+                        <div class="drawer-inner">
+                            <div class="drawer-top">
+                                <span class="drawer-label">שמאל 3</span>
+                                <span class="count-badge zero" id="badge-L3">0</span>
+                            </div>
+                            <div class="drawer-chips" id="chips-L3"></div>
+                        </div>
+                        <div class="handle-wrap">
+                            <div class="handle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Detail Panel -->
+        <div class="detail-panel" id="detail-panel">
+            <div class="detail-empty">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="1.4"
+                    stroke-linecap="round">
+                    <rect x="2" y="3" width="20" height="19" rx="2" />
+                    <line x1="2" y1="10" x2="22" y2="10" />
+                    <line x1="2" y1="17" x2="22" y2="17" />
+                    <line x1="8" y1="10" x2="8" y2="22" />
+                </svg>
+                <p>לחץ על מגירה כדי לצפות<br>ולנהל את תכולתה</p>
+            </div>
+        </div>
+    </div>
+    <!-- Inventory Summary -->
+    <div class="summary-section" id="summary-section">
+        <div class="section-title">&#128203; סיכום מלאי</div>
+        <div class="summary-table-wrap">
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th class="item-col">פריט</th>
+                        <th class="qty-col" style="text-align:center;">סה"כ</th>
+                        <th>מיקומים</th>
+                    </tr>
+                </thead>
+                <tbody id="summary-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Master Items -->
+    <div class="master-section">
+        <div class="section-title">&#128230; רשימת פריטים כללית</div>
+        <div class="add-master-row">
+            <input type="text" id="new-item-input" placeholder="שם פריט חדש (למשל כרעיים)..."
+                onkeydown="if(event.key==='Enter') addMasterItem()">
+            <button class="btn btn-blue" onclick="addMasterItem()">+ הוסף פריט</button>
+        </div>
+        <div class="master-grid" id="master-grid">
+            <span class="empty-note">No items yet — add your first item above.</span>
+        </div>
+    </div>
+    <script>
+        // ---- Firebase setup ----
+        const firebaseConfig = {
+            apiKey: "AIzaSyCdSpsitmhYp_2RJHF45sY6jx8JuK7Sxlw",
+            authDomain: "freezer-app-ce27f.firebaseapp.com",
+            projectId: "freezer-app-ce27f",
+            storageBucket: "freezer-app-ce27f.firebasestorage.app",
+            messagingSenderId: "1077631987632",
+            appId: "1:1077631987632:web:ab8f7e6c412f2cbf093075",
+            measurementId: "G-XMPYWFRJWY"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        // Single document holds the full app state
+        const docRef = db.collection('freezer').doc('data');
+        // ---- Constants ----
+        const DRAWERS = ['L1', 'L2', 'L3', 'R1', 'R2'];
+        const DRAWER_SIZES = {
+            L1: 'sm',
+            L2: 'sm',
+            L3: 'lg',
+            R1: 'sm',
+            R2: 'lg'
+        };
+        const DRAWER_NAMES = {
+            L1: 'שמאל 1',
+            L2: 'שמאל 2',
+            L3: 'שמאל 3',
+            R1: 'ימין 1',
+            R2: 'ימין 2',
+        };
+        // ---- State ----
+        let state = {
+            items: [],
+            drawers: {
+                L1: [],
+                L2: [],
+                L3: [],
+                R1: [],
+                R2: []
+            }
+        };
+        let activeDrawer = null;
+        let isEditing = false;
+
+        // ---- Migration: Convert string list to object list ----
+        function migrateData() {
+            let changed = false;
+            DRAWERS.forEach(id => {
+                const list = state.drawers[id];
+                if (list.length > 0 && typeof list[0] === 'string') {
+                    // Convert and merge duplicates
+                    const merged = {};
+                    list.forEach(name => {
+                        merged[name] = (merged[name] || 0) + 1;
+                    });
+                    state.drawers[id] = Object.keys(merged).map(name => ({
+                        name,
+                        qty: merged[name]
+                    }));
+                    changed = true;
+                }
+            });
+            if (changed) persist();
+        }
+        // ---- Persistence: write full state to Firestore ----
+        function persist() {
+            docRef.set({
+                items: state.items,
+                drawers: state.drawers
+            })
+                .catch(err => console.error('Firestore write error:', err));
+        }
+        // ---- Real-time listener ----
+        docRef.onSnapshot((doc) => {
+            if (doc.exists) {
+                const d = doc.data();
+                state.items = Array.isArray(d.items) ? d.items : [];
+                DRAWERS.forEach(id => {
+                    state.drawers[id] = Array.isArray(d.drawers?.[id]) ? d.drawers[id] : [];
+                });
+                migrateData();
+            }
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) overlay.style.display = 'none';
+            if (!isEditing) renderAll();
+        }, (err) => {
+            console.error('Firestore error:', err);
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+                overlay.classList.add('error');
+                overlay.innerHTML = '<div class="err-icon">&#9888;</div>' +
+                    '<strong style="color:#ff4d4d">Could not connect to Firestore</strong>' +
+                    '<div class="err-msg">' + esc(err.message) + '</div>';
+            }
+        });
+        // ---- Escape HTML ----
+        function esc(s) {
+            return String(s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+        // ---- Render: Freezer drawers ----
+        function renderDrawers() {
+            DRAWERS.forEach(id => {
+                const items = state.drawers[id];
+                const badge = document.getElementById('badge-' + id);
+                const totalQty = items.reduce((sum, i) => sum + i.qty, 0);
+                badge.textContent = totalQty;
+                badge.className = 'count-badge' + (totalQty === 0 ? ' zero' : '');
+                const chipsEl = document.getElementById('chips-' + id);
+                chipsEl.innerHTML = '';
+                const max = DRAWER_SIZES[id] === 'lg' ? 6 : 3;
+                items.slice(0, max).forEach(item => {
+                    const d = document.createElement('div');
+                    d.className = 'mini-chip';
+                    d.textContent = `${item.name}${item.qty > 1 ? ` (x${item.qty})` : ''}`;
+                    d.title = item.name;
+                    chipsEl.appendChild(d);
+                });
+                if (items.length > max) {
+                    const d = document.createElement('div');
+                    d.className = 'mini-chip more';
+                    d.textContent = 'עוד ' + (items.length - max) + '+';
+                    chipsEl.appendChild(d);
+                }
+            });
+        }
+        // ---- Render: Detail panel ----
+        function renderDetail() {
+            const panel = document.getElementById('detail-panel');
+            if (!activeDrawer) {
+                panel.innerHTML = ` <div class="detail-empty animate-in"> <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="1.5" stroke-linecap="round"> <rect x="2" y="3" width="20" height="19" rx="2"/> <line x1="2" y1="10" x2="22" y2="10"/> <line x1="2" y1="17" x2="22" y2="17"/> <line x1="8" y1="10" x2="8" y2="22"/> </svg> <p>בחר מגירה לניהול המלאי</p> </div>`;
+                return;
+            }
+            const id = activeDrawer;
+            const items = state.drawers[id];
+            const listHtml = items.map((item, idx) => `
+                <li>
+                    <span>${esc(item.name)}</span>
+                    <div class="stepper">
+                        <button class="step-btn" onclick="updateQty('${id}', ${idx}, -1)">-</button>
+                        <span class="qty-val">${item.qty}</span>
+                        <button class="step-btn" onclick="updateQty('${id}', ${idx}, 1)">+</button>
+                    </div>
+                </li>`).join('');
+            const addRowHtml = state.items.length === 0 ?
+                `<p class="hint">הוסף פריטים לרשימה הכללית תחילה.</p>` :
+                `<div class="add-row">
+                    <select id="add-select">
+                        <option value="">בחר פריט...</option>
+                        ${state.items.map(i => `<option value="${esc(i)}">${esc(i)}</option>`).join('')}
+                    </select>
+                    <button class="btn" onclick="addToDrawer('${id}')">הוסף למגירה</button>
+                </div>`;
+            panel.innerHTML = `
+                <div class="animate-in">
+                    <div class="detail-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2" stroke-linecap="round">
+                            <rect x="2" y="3" width="20" height="19" rx="2"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                        </svg>
+                        ${esc(DRAWER_NAMES[id])}
+                    </div>
+                    <ul class="drawer-items-list">${listHtml}</ul>
+                    ${addRowHtml}
+                </div>`;
+        }
+        // ---- Render: Master Items ----
+        function renderMaster() {
+            const grid = document.getElementById('master-grid');
+            if (state.items.length === 0) {
+                grid.innerHTML = '<span class="empty-note">No items yet — add your first item above.</span>';
+                return;
+            }
+            grid.innerHTML = '';
+            state.items.forEach((item, idx) => {
+                const inCount = DRAWERS.reduce((sum, d) => {
+                    const found = state.drawers[d].find(i => i.name === item);
+                    return sum + (found ? found.qty : 0);
+                }, 0);
+                const chip = document.createElement('div');
+                chip.className = 'master-chip';
+                chip.id = 'mchip-' + idx;
+                chip.innerHTML = `<span class="chip-name" onclick="startEdit(${idx})" title="לחץ לשינוי שם">${esc(item)}</span>` + (inCount > 0 ? `<span class="in-drawers" title="סה&quot;כ במקפיא">&#215;${inCount}</span>` : '') + `<button class="icon-btn" onclick="startEdit(${idx})" title="שנה שם" style="margin-right:8px; color:var(--text-dim); background:none; border:none; cursor:pointer;">&#9998;</button>` + `<button class="icon-btn del" onclick="deleteMaster(${idx})" title="מחק פריט" style="color:var(--text-dim); background:none; border:none; cursor:pointer;">&#10005;</button>`;
+                grid.appendChild(chip);
+            });
+        }
+
+        // ---- Render: Summary Table ----
+        function renderSummary() {
+            const body = document.getElementById('summary-body');
+            if (!body) return;
+
+            const itemsWithStock = state.items.map(item => {
+                const locations = [];
+                let total = 0;
+                DRAWERS.forEach(d => {
+                    const entry = state.drawers[d].find(i => i.name === item);
+                    if (entry && entry.qty > 0) {
+                        locations.push({
+                            id: d,
+                            count: entry.qty
+                        });
+                        total += entry.qty;
+                    }
+                });
+                return {
+                    name: item,
+                    total,
+                    locations
+                };
+            }).filter(i => i.total > 0);
+
+            if (itemsWithStock.length === 0) {
+                body.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-dim); padding:40px;">המקפיא שלך ריק כרגע.</td></tr>';
+                return;
+            }
+
+            body.innerHTML = itemsWithStock.map(item => `
+                <tr>
+                    <td class="item-col"><strong>${esc(item.name)}</strong></td>
+                    <td class="qty-col" style="text-align:center;">${item.total}</td>
+                    <td class="loc-col" style="color:var(--text-dim); font-size:0.85rem;">
+                        ${item.locations.map(loc => `
+                            <span style="background:rgba(56,189,248,0.1); color:var(--accent-blue); padding:2px 6px; border-radius:4px; margin-left:4px;">
+                                ${loc.id}${loc.count > 1 ? ` (${loc.count})` : ''}
+                            </span>`).join(' ')}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderAll() {
+            renderDrawers();
+            renderDetail();
+            renderMaster();
+            renderSummary();
+        }
+        // ---- Actions ----
+        function selectDrawer(id) {
+            if (activeDrawer && activeDrawer !== id) {
+                document.getElementById('drawer-' + activeDrawer).classList.remove('active');
+            }
+            activeDrawer = id;
+            document.getElementById('drawer-' + id).classList.add('active');
+            renderDetail();
+        }
+
+        function addToDrawer(id) {
+            const sel = document.getElementById('add-select');
+            if (!sel) return;
+            const itemName = sel.value;
+            if (!itemName) return;
+
+            const existing = state.drawers[id].find(i => i.name === itemName);
+            if (existing) {
+                existing.qty++;
+            } else {
+                state.drawers[id].push({ name: itemName, qty: 1 });
+            }
+
+            persist();
+            renderAll();
+        }
+
+        function updateQty(id, idx, delta) {
+            const item = state.drawers[id][idx];
+            if (!item) return;
+            item.qty += delta;
+            if (item.qty <= 0) {
+                state.drawers[id].splice(idx, 1);
+            }
+            persist();
+            renderAll();
+        }
+
+        function addMasterItem() {
+            const input = document.getElementById('new-item-input');
+            const name = input.value.trim();
+            if (!name) return;
+            const dupe = state.items.some(i => i.toLowerCase() === name.toLowerCase());
+            if (dupe) {
+                input.classList.add('error');
+                input.title = 'Item already exists';
+                setTimeout(() => {
+                    input.classList.remove('error');
+                    input.title = '';
+                }, 2000);
+                return;
+            }
+            state.items.push(name);
+            state.items.sort((a, b) => a.localeCompare(b, undefined, {
+                sensitivity: 'base'
+            }));
+            persist();
+            input.value = '';
+            renderAll();
+        }
+
+        function deleteMaster(idx) {
+            const item = state.items[idx];
+            DRAWERS.forEach(d => {
+                state.drawers[d] = state.drawers[d].filter(i => i.name !== item);
+            });
+            state.items.splice(idx, 1);
+            persist();
+            renderAll();
+        }
+
+        function startEdit(idx) {
+            const chip = document.getElementById('mchip-' + idx);
+            if (!chip) return;
+            const nameSpan = chip.querySelector('.chip-name');
+            if (!nameSpan) return;
+            const oldName = state.items[idx];
+            const inp = document.createElement('input');
+            inp.type = 'text';
+            inp.className = 'chip-edit-input';
+            inp.value = oldName;
+            inp.style.background = 'rgba(0,0,0,0.3)';
+            inp.style.color = 'white';
+            inp.style.border = '1px solid var(--accent-blue)';
+            nameSpan.replaceWith(inp);
+            inp.focus();
+            inp.select();
+
+            isEditing = true;
+            let done = false;
+
+            function commit() {
+                if (done) return;
+                done = true;
+                isEditing = false;
+                const newName = inp.value.trim();
+                const conflict = state.items.some((s, i) => i !== idx && s.toLowerCase() === newName.toLowerCase());
+                if (newName && newName !== oldName && !conflict) {
+                    DRAWERS.forEach(d => {
+                        state.drawers[d] = state.drawers[d].map(obj => {
+                            if (obj.name === oldName) return { ...obj, name: newName };
+                            return obj;
+                        });
+                    });
+                    state.items[idx] = newName;
+                    state.items.sort((a, b) => a.localeCompare(b, undefined, {
+                        sensitivity: 'base'
+                    }));
+                    persist();
+                }
+                renderAll();
+            }
+
+            inp.addEventListener('blur', commit);
+            inp.addEventListener('keydown', e => {
+                if (e.key === 'Enter') inp.blur();
+                if (e.key === 'Escape') {
+                    done = true;
+                    isEditing = false;
+                    renderAll();
+                }
+            });
+        }
+    </script>
 </body>
+
 </html>
