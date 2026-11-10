@@ -91,7 +91,7 @@ function renderLoginHtml({ error = false, unconfigured = false, returnTo = '/' }
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Locked | Brrr</title>
+  <title>Locked | Freezer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Heebo:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -271,7 +271,7 @@ function renderLoginHtml({ error = false, unconfigured = false, returnTo = '/' }
         <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
       </svg>
     </div>
-    <h1>&#10052; Brrr</h1>
+    <h1>&#10052; Freezer</h1>
     <p class="subtitle">The freezer is locked</p>
 
     ${
