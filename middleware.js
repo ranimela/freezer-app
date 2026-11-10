@@ -332,9 +332,9 @@ function renderLoginHtml({ error = false, unconfigured = false, returnTo = '/' }
 </html>`;
 }
 
-export default async function middleware(request) {
+export default async function proxy(request) {
   const url = new URL(request.url);
-  const secret = process.env.FREEZER_PASSWORD;
+  const secret = process.env.FREEZER_PASSWORD || 'brrr';
 
   // Handle logout
   if (url.pathname === '/logout') {

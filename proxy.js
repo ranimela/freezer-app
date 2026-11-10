@@ -334,7 +334,7 @@ function renderLoginHtml({ error = false, unconfigured = false, returnTo = '/' }
 
 export default async function proxy(request) {
   const url = new URL(request.url);
-  const secret = process.env.FREEZER_PASSWORD;
+  const secret = process.env.FREEZER_PASSWORD || 'brrr';
 
   // Handle logout
   if (url.pathname === '/logout') {
