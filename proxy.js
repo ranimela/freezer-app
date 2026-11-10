@@ -87,11 +87,11 @@ function getCookie(header, name) {
 
 function renderLoginHtml({ error = false, unconfigured = false, returnTo = '/' }) {
   return `<!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>כניסה | בררר</title>
+  <title>Locked | Brrr</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Heebo:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -215,7 +215,7 @@ function renderLoginHtml({ error = false, unconfigured = false, returnTo = '/' }
       font-size: 1.05rem;
       color: var(--text-main);
       direction: ltr;
-      text-align: right;
+      text-align: left;
       outline: none;
       transition: all 0.2s ease;
       font-family: inherit;
@@ -226,7 +226,7 @@ function renderLoginHtml({ error = false, unconfigured = false, returnTo = '/' }
     }
     .toggle-pass {
       position: absolute;
-      left: 12px;
+      right: 12px;
       top: 50%;
       transform: translateY(-50%);
       background: none;
@@ -271,14 +271,14 @@ function renderLoginHtml({ error = false, unconfigured = false, returnTo = '/' }
         <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
       </svg>
     </div>
-    <h1>בררר</h1>
-    <p class="subtitle">המקפיא נעול. יש להזין סיסמה להמשך</p>
+    <h1>&#10052; Brrr</h1>
+    <p class="subtitle">The freezer is locked</p>
 
     ${
       unconfigured
         ? `<div class="info-alert">
-            <strong>נדרשת הגדרה ראשונית:</strong><br>
-            יש להגדיר את משתנה הסביבה <code>FREEZER_PASSWORD</code> בלוח הבקרה של Vercel.
+            <strong>Configuration required:</strong><br>
+            Please set the <code>FREEZER_PASSWORD</code> environment variable in your Vercel dashboard.
           </div>`
         : ''
     }
@@ -291,7 +291,7 @@ function renderLoginHtml({ error = false, unconfigured = false, returnTo = '/' }
               <line x1="12" y1="8" x2="12" y2="12"/>
               <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
-            סיסמה שגויה. נסה שוב.
+            Incorrect password. Please try again.
           </div>`
         : ''
     }
@@ -301,15 +301,15 @@ function renderLoginHtml({ error = false, unconfigured = false, returnTo = '/' }
         ? `<form method="POST" action="/login">
             <input type="hidden" name="returnTo" value="${encodeURIComponent(returnTo)}">
             <div class="input-wrap">
-              <input type="password" id="passInput" name="password" placeholder="סיסמה..." required autofocus autocomplete="current-password">
-              <button type="button" class="toggle-pass" onclick="togglePassword()" title="הצג/הסתר סיסמה">
+              <input type="password" id="passInput" name="password" placeholder="Password..." required autofocus autocomplete="current-password">
+              <button type="button" class="toggle-pass" onclick="togglePassword()" title="Show/hide password">
                 <svg id="eyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                   <circle cx="12" cy="12" r="3"/>
                 </svg>
               </button>
             </div>
-            <button type="submit" class="submit-btn">כניסה</button>
+            <button type="submit" class="submit-btn">Unlock</button>
           </form>`
         : ''
     }
